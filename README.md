@@ -39,7 +39,7 @@ flask db migrate -m "Initial migration."
 flask db upgrade
 6.Run the application:
 flask run
-![image](photo/photo1.png)
+![image](https://github.com/rahmabenjemaa/To-do-list/assets/154542912/c6257178-5fd0-4375-ba07-ec184ad95dfd)
 
 
 
