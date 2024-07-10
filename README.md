@@ -39,6 +39,6 @@ flask db migrate -m "Initial migration."
 flask db upgrade
 6.Run the application:
 flask run
-![ ](photo/photo1.png)
+![interface ](photo/photo1.png)
 
 
