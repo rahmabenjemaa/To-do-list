@@ -1,0 +1,204 @@
+{% block title %}
+
+{% endblock %}
+{% block content %}
+<div class="container">
+<h1>Todo List</h1>
+<table id ="todotable">
+    {% for todo in todos %}
+
+    <tr id ="todo{{ todo.tid }}" class="todo-row" data-tid="{{ todo.tid }}" data-task="{{ todo.task }}" data-completed="false">
+        <td class="checkbox-cell">
+                <div class="checkbox"></div>
+        </td>
+
+        <td class="task">{{todo.task}}</td>
+        <td><a href="/delete/{{todo.tid}}">Delete</a></td>
+
+    </tr>
+    {% endfor %}
+</table>
+<form action="{{ url_for('add') }}" method="POST">
+    <input type="text" name="task" placeholder="add a task">
+    <input type="submit" value="Add">
+
+</form>
+      <div class="time">
+            <p><span id="datetime"></span></p>
+            <script>
+                var dt = new Date();
+                document.getElementById("datetime").innerHTML = dt.toLocaleString();
+            </script>
+        </div>
+</div>
+<script>
+    // Event delegation for toggling completion on click
+    document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (target.matches('.checkbox')) {
+            const row = target.closest('.todo-row');
+            if (row) {
+                const completed = row.getAttribute('data-completed') === 'true';
+                row.setAttribute('data-completed', !completed);
+                row.classList.toggle('completed', !completed);
+            }
+        }
+    });
+
+    // Handle form submission
+    document.getElementById('addForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const taskInput = document.querySelector('input[name="task"]');
+        const task = taskInput.value.trim();
+        if (task !== '') {
+            try {
+                const response = await fetch('{{ url_for("add") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ task }),
+                });
+                if (response.ok) {
+                    taskInput.value = '';
+                } else {
+                    throw new Error('Failed to add task');
+                }
+            } catch (error) {
+                console.error('Error adding task:', error);
+            }
+        }
+    });
+</script>
+
+
+    <style>
+        /* Reset styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0; /* Light background color */
+    color: #333;
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    height: 100vh; /* Full viewport height */
+}
+
+.container {
+    max-width: 600px;
+    background-color: #fff; /* White background for container */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #555;
+    text-align: center;
+}
+.time{
+    font-size: 10px;
+    margin-top: 20px;
+    color: #555;
+    text-align: center;
+}
+
+/* Todo list table styles */
+#todotable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+#todotable td, #todotable th {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd; /* Light border between rows */
+}
+
+#todotable th {
+    background-color: #f2f2f2; /* Light gray background for table header */
+}
+
+/* Form styles */
+form {
+    display: flex;
+    align-items: center;
+}
+
+form input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    margin-right: 10px;
+}
+
+form input[type="submit"] {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #6cb2eb; /* Pastel blue button background */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+form input[type="submit"]:hover {
+    background-color: #4a90e2; /* Darker shade of blue on hover */
+}
+
+/* Checkbox styles */
+.checkbox {
+    width: 14px;
+    height: 14px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.completed .task {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.completed .checkbox {
+    background-color: #ccc;
+}
+
+        .todo-row {
+            cursor: pointer;
+        }
+        .checkbox {
+            width: 10px;
+            height: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        .completed .task {
+            text-decoration: line-through;
+        }
+        .completed .checkbox {
+            background-color: #ccc;
+        }
+    </style>
+
+
+{% endblock %}
+
